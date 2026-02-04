@@ -1,33 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Admin Login</title>
+<h2>Admin Login</h2>
 
-  <link rel="stylesheet" href="./css/style.css" />
-  <link rel="stylesheet" href="./css/theme.css" />
-</head>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+<button id="loginBtn">Login</button>
 
-<body class="dark">
-
-  <div class="login-box">
-    <h1>Admin Login</h1>
-
-    <button id="googleLogin">Sign in with Google</button>
-
-    <hr />
-
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
-
-    <button id="emailLogin">Login</button>
-  </div>
-
-  <!-- Firebase -->
-  <script type="module" src="./firebase/firebase.js"></script>
-
-  <!-- Auth logic -->
-  <script type="module" src="./js/auth.js"></script>
-
-</body>
-</html>
+<script type="module" src="./js/auth-admin.js"></script>
