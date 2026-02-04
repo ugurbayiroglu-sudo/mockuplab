@@ -1,66 +1,24 @@
-import { auth, db } from "../firebase/firebase.js";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { auth } from "./firebase.js";
+import { signInWithEmailAndPassword } from
+  "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
-import {
-  doc,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-
-// ✅ SADECE ADMIN EMAIL
 const ADMIN_EMAIL = "ugurbayiroglu@gmail.com";
 
-// Google login
-export async function googleLogin() {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  await saveUser(result.user);
-}
+document.getElementById("loginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-// Email login
-export async function emailLogin(email, password) {
-  const result = await signInWithEmailAndPassword(auth, email, password);
-  await redirectByRole(result.user);
-}
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email, password);
 
-// Email register (okuyucular)
-export async function emailRegister(email, password) {
-  const result = await createUserWithEmailAndPassword(auth, email, password);
-  await saveUser(result.user);
-}
+    if (cred.user.email !== ADMIN_EMAIL) {
+      alert("You are not admin");
+      return;
+    }
 
-async function saveUser(user) {
-  const role = user.email === ADMIN_EMAIL ? "admin" : "user";
-
-  await setDoc(doc(db, "users", user.uid), {
-    email: user.email,
-    role: role
-  });
-
-  redirectByRole(user);
-}
-
-async function redirectByRole(user) {
-  const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) return;
-
-  if (snap.data().role === "admin") {
     window.location.href = "admin.html";
-  } else {
-    window.location.href = "index.html";
-  }
-  
-// 🔘 BUTTON EVENTS
-document.addEventListener("DOMContentLoaded", () => {
-  const googleBtn = document.getElementById("googleBtn");
-
-  if (googleBtn) {
-    googleBtn.addEventListener("click", googleLogin);
+  } catch (err) {
+    alert("Login failed");
+    console.error(err);
   }
 });
-
