@@ -3,243 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MockupLab | Premium Digital Studio</title>
+    <title>BookLab | Kitap İncelemeleri ve Önerileri</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #fff; color: #000; scroll-behavior: smooth; }
-        .gumroad-button { 
-            display: block !important; width: 100% !important; background-color: #000 !important; 
-            color: #fff !important; text-transform: uppercase !important; letter-spacing: 1px !important; 
-            font-size: 11px !important; font-weight: 700 !important; padding: 18px !important; 
-            border-radius: 4px !important; text-align: center !important; 
-        }
+        :root { --book-bg: #fdfcf8; --ink: #1a1a1a; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--book-bg); color: var(--ink); }
+        h1, h2, .serif { font-family: 'Crimson Pro', serif; }
         .view { display: none; }
         .view.active { display: block; }
-        .drop-zone.active { border: 2px dashed #2563eb; background: #f8fafc; }
-        #detail-view { z-index: 100; }
-        /* Pinterest Style Grid */
-        .product-card img { transition: transform 0.5s ease; }
-        .product-card:hover img { transform: scale(1.03); }
+        .btn-affiliate { 
+            background: #1a1a1a; color: white; padding: 16px; border-radius: 8px;
+            text-align: center; font-weight: 600; display: block; width: 100%;
+            transition: all 0.3s ease; border: 2px solid transparent;
+        }
+        .btn-affiliate:hover { background: transparent; color: #1a1a1a; border-color: #1a1a1a; }
+        .book-card { transition: transform 0.4s ease; cursor: pointer; }
+        .book-card:hover { transform: translateY(-10px); }
     </style>
 </head>
 <body>
 
-    <nav class="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <div class="text-xl font-black tracking-tighter uppercase italic cursor-pointer" onclick="showPage('home')">
-                MOCKUP<span class="text-blue-600">LAB</span>
+    <nav class="border-b border-stone-200 sticky top-0 bg-white/90 backdrop-blur-md z-50">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="text-2xl font-bold tracking-tighter serif cursor-pointer" onclick="showPage('home')">
+                BOOK<span class="text-orange-700">LAB</span>
             </div>
-            <div id="nav-cats" class="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest text-gray-400"></div>
-            <div class="flex items-center gap-4">
-                <button onclick="showPage('admin')" class="text-[10px] text-gray-300 hover:text-black font-bold uppercase tracking-tighter">Panel</button>
-            </div>
+            <div id="nav-cats" class="hidden md:flex gap-6 text-xs font-semibold uppercase tracking-widest text-stone-500"></div>
+            <button onclick="showPage('admin')" class="text-[10px] bg-stone-100 px-3 py-1 rounded-full font-bold uppercase">Panel</button>
         </div>
     </nav>
 
     <div id="page-home" class="view active">
-        <header class="py-20 text-center">
-            <h1 class="text-6xl font-black tracking-tighter mb-4">Premium Assets.</h1>
-            <p class="text-gray-400 max-w-md mx-auto text-sm leading-relaxed font-medium">Professional grade mockups for digital creators and apparel brands.</p>
+        <header class="py-20 text-center max-w-2xl mx-auto px-6">
+            <h1 class="text-5xl font-bold mb-4 tracking-tight">Okunacak Bir Sonraki Hikayeni Keşfet.</h1>
+            <p class="text-stone-500 text-lg">Seçkin kitap incelemeleri, derinlemesine analizler ve en iyi baskı önerileri.</p>
         </header>
-        <main class="max-w-7xl mx-auto px-6 pb-32">
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-16"></div>
+        <main class="max-w-6xl mx-auto px-6 pb-32">
+            <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12"></div>
         </main>
     </div>
 
-    <div id="page-detail" class="view fixed inset-0 bg-white z-[100] overflow-y-auto">
-        <div class="max-w-6xl mx-auto px-6 py-12">
-            <button onclick="showPage('home')" class="fixed top-8 right-8 text-4xl font-light hover:rotate-90 transition-transform">&times;</button>
-            <div class="grid lg:grid-cols-2 gap-16 mt-10">
-                <div class="space-y-6">
-                    <div id="detail-main-media" class="aspect-[4/5] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                        </div>
-                    <div id="detail-thumbs" class="flex gap-4 overflow-x-auto pb-4"></div>
+    <div id="page-detail" class="view fixed inset-0 bg-[#fdfcf8] z-[100] overflow-y-auto">
+        <div class="max-w-5xl mx-auto px-6 py-12">
+            <button onclick="showPage('home')" class="fixed top-8 right-8 text-3xl font-light hover:scale-110 transition">&times;</button>
+            <div class="grid lg:grid-cols-12 gap-16 mt-10">
+                <div class="lg:col-span-5 space-y-8">
+                    <div class="aspect-[2/3] shadow-2xl rounded-lg overflow-hidden border border-stone-200">
+                        <img id="det-img" class="w-full h-full object-cover">
+                    </div>
+                    <div id="affiliate-container">
+                        <a id="det-affiliate-link" href="#" target="_blank" class="btn-affiliate">
+                            <span id="det-affiliate-text">Kitabı Satın Al</span>
+                        </a>
+                    </div>
+                    <div id="det-video-cont" class="aspect-video rounded-xl overflow-hidden shadow-lg hidden"></div>
                 </div>
-                <div class="flex flex-col justify-center">
-                    <span id="det-cat" class="text-blue-600 text-[10px] font-black uppercase tracking-[0.3em] mb-4"></span>
-                    <h2 id="det-title" class="text-5xl font-black tracking-tight mb-4 leading-[0.9]"></h2>
-                    <p id="det-price" class="text-2xl font-light mb-8 text-gray-900"></p>
-                    <div id="det-desc" class="text-gray-500 text-sm leading-relaxed mb-10 space-y-4 whitespace-pre-line border-t pt-8"></div>
-                    <div id="buy-action"></div>
+                <div class="lg:col-span-7 py-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span id="det-cat" class="bg-orange-100 text-orange-800 text-[10px] font-black px-3 py-1 rounded-full uppercase"></span>
+                        <span class="text-stone-400 text-sm">Puan: <b id="det-rating" class="text-black"></b>/10</span>
+                    </div>
+                    <h2 id="det-title" class="text-5xl font-bold mb-2 leading-tight"></h2>
+                    <h3 id="det-author" class="text-xl text-stone-400 serif mb-8"></h3>
+                    <div id="det-content" class="text-stone-700 leading-relaxed space-y-6 text-lg serif border-t border-stone-100 pt-8"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="page-admin" class="view min-h-screen bg-slate-50 p-6 md:p-12">
-        <div class="max-w-4xl mx-auto">
-            <div id="admin-login" class="bg-white p-12 rounded-[2rem] shadow-xl border border-slate-100 text-center">
-                <h3 class="text-xl font-bold mb-8 uppercase tracking-widest">Admin Access</h3>
-                <input type="password" id="admin-pass" class="w-full max-w-xs border-2 border-slate-100 p-4 rounded-2xl mb-4 text-center outline-none focus:border-blue-500 transition-colors" placeholder="Password">
-                <button onclick="handleLogin()" class="bg-black text-white px-12 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest block mx-auto">Unlock</button>
+    <div id="page-admin" class="view min-h-screen bg-stone-100 p-6 md:p-12">
+        <div class="max-w-4xl mx-auto bg-white p-10 rounded-3xl shadow-sm border">
+            <div id="admin-login" class="text-center py-10">
+                <h3 class="text-xl font-bold mb-6">Admin Girişi</h3>
+                <input type="password" id="admin-pass" class="border p-4 rounded-xl mb-4 block mx-auto text-center" placeholder="Şifre">
+                <button onclick="handleLogin()" class="bg-black text-white px-10 py-3 rounded-xl font-bold text-xs uppercase">Giriş Yap</button>
             </div>
 
             <div id="admin-content" class="hidden space-y-8">
-                <div class="flex justify-between items-center mb-10">
-                    <h2 class="text-3xl font-black italic tracking-tighter uppercase">Dashboard</h2>
-                    <button onclick="logout()" class="text-xs font-bold text-red-500 uppercase tracking-widest">Logout</button>
+                <div class="flex justify-between border-b pb-4">
+                    <h2 class="text-2xl font-bold serif">Kitap Ekle / Yönet</h2>
+                    <button onclick="logout()" class="text-red-500 text-xs font-bold uppercase">Çıkış</button>
                 </div>
-
-                <div class="bg-white p-8 rounded-[2rem] border shadow-sm space-y-6">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Ürün Başlığı</label>
-                            <input type="text" id="pTitle" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none">
-                            
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kategori</label>
-                            <div class="flex gap-2">
-                                <select id="pCat" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none"></select>
-                                <button onclick="addCatPrompt()" class="bg-blue-600 text-white px-6 rounded-2xl font-bold">+</button>
-                            </div>
-
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Fiyat & Gumroad Slug</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="text" id="pPrice" placeholder="29.00" class="border p-4 rounded-2xl bg-slate-50 outline-none">
-                                <input type="text" id="pSlug" placeholder="zxshe" class="border p-4 rounded-2xl bg-slate-50 outline-none">
-                            </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <input type="text" id="pTitle" placeholder="Kitap Adı" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
+                        <input type="text" id="pAuthor" placeholder="Yazar Adı" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
+                        <div class="flex gap-2">
+                            <select id="pCat" class="w-full border p-4 rounded-xl outline-none bg-stone-50"></select>
+                            <button onclick="addCat()" class="bg-stone-800 text-white px-4 rounded-xl font-bold">+</button>
                         </div>
-
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Görseller (Virgülle ayırın veya URL yapıştırın)</label>
-                            <textarea id="pImgs" placeholder="images/1.jpg, images/2.jpg veya https://cdn.com/1.jpg" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none h-[120px] text-xs"></textarea>
-                            
-                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">YouTube Video ID (İsteğe bağlı)</label>
-                            <input type="text" id="pVid" placeholder="Örn: dQw4w9WgXcQ" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none">
-                        </div>
+                        <input type="text" id="pRating" placeholder="Puan (Örn: 9.2)" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
                     </div>
-
-                    <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Ürün Açıklaması & SEO Etiketleri</label>
-                    <textarea id="pDesc" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none h-40 text-sm" placeholder="Detaylı ürün bilgisi..."></textarea>
-
-                    <button onclick="saveProduct()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-black transition-colors shadow-lg shadow-blue-100">Ürünü Yayınla</button>
-                    <button onclick="clearAll()" class="w-full text-[10px] text-red-300 uppercase font-bold py-2">Tüm Veriyi Sıfırla (Dikkat!)</button>
+                    <div class="space-y-4">
+                        <input type="text" id="pImgs" placeholder="Kapak Resmi URL" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
+                        <input type="text" id="pVid" placeholder="YouTube Video ID (İsteğe bağlı)" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
+                        <input type="text" id="pAffText" placeholder="Buton Yazısı (Örn: Amazon'dan Al)" class="w-full border p-4 rounded-xl outline-none bg-orange-50 font-bold border-orange-100">
+                        <input type="text" id="pAffLink" placeholder="Affiliate Linki (http://...)" class="w-full border p-4 rounded-xl outline-none bg-orange-50 font-bold border-orange-100">
+                    </div>
                 </div>
+                <textarea id="pDesc" class="w-full border p-4 rounded-xl h-64 outline-none bg-stone-50 serif" placeholder="Kitap incelemeniz ve kişisel yorumlarınız..."></textarea>
+                <button onclick="saveBook()" class="w-full bg-orange-700 text-white py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-black transition shadow-xl">İncelemeyi Yayınla</button>
+                <button onclick="if(confirm('Hepsi silinsin mi?')) {localStorage.clear(); location.reload();}" class="w-full text-[10px] text-stone-300 uppercase mt-4">Tüm Verileri Temizle</button>
             </div>
         </div>
     </div>
 
     <script>
-        let categories = JSON.parse(localStorage.getItem('ml_categories')) || ["Summer", "Hoodie", "Bundle"];
-        let products = JSON.parse(localStorage.getItem('ml_products')) || [];
+        let categories = JSON.parse(localStorage.getItem('bl_cats')) || ["Roman", "Tarih", "Yazılım", "Bilim"];
+        let books = JSON.parse(localStorage.getItem('bl_books')) || [];
 
-        // ─── NAVİGASYON MANTIĞI ───
-        function showPage(pageId) {
+        function showPage(p) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            if(pageId === 'home') renderHome();
+            document.getElementById('page-' + p).classList.add('active');
+            if(p === 'home') renderHome();
             window.scrollTo(0,0);
         }
 
-        // ─── ADMİN MANTIĞI ───
         function handleLogin() {
             if(document.getElementById('admin-pass').value === "admin123") {
                 document.getElementById('admin-login').classList.add('hidden');
                 document.getElementById('admin-content').classList.remove('hidden');
-                refreshCatSelect();
+                refreshCats();
             }
         }
 
-        function addCatPrompt() {
-            const val = prompt("Yeni kategori ismi:");
-            if(val) { 
-                categories.push(val); 
-                localStorage.setItem('ml_categories', JSON.stringify(categories));
-                refreshCatSelect();
-                renderHome();
-            }
-        }
-
-        function refreshCatSelect() {
+        function refreshCats() {
             document.getElementById('pCat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
-        function saveProduct() {
-            const p = {
+        function addCat() {
+            let c = prompt("Yeni kategori:");
+            if(c) { categories.push(c); localStorage.setItem('bl_cats', JSON.stringify(categories)); refreshCats(); }
+        }
+
+        function saveBook() {
+            const b = {
                 id: Date.now(),
                 title: document.getElementById('pTitle').value,
-                price: document.getElementById('pPrice').value,
-                slug: document.getElementById('pSlug').value,
+                author: document.getElementById('pAuthor').value,
                 cat: document.getElementById('pCat').value,
-                desc: document.getElementById('pDesc').value,
+                rating: document.getElementById('pRating').value,
+                img: document.getElementById('pImgs').value,
                 vid: document.getElementById('pVid').value,
-                imgs: document.getElementById('pImgs').value.split(',').map(s => s.trim()).filter(s => s !== "")
+                affText: document.getElementById('pAffText').value || "Satın Al",
+                affLink: document.getElementById('pAffLink').value || "#",
+                desc: document.getElementById('pDesc').value
             };
-            if(!p.title || p.imgs.length === 0) return alert("Hata: Başlık ve en az bir görsel zorunludur.");
-            products.push(p);
-            localStorage.setItem('ml_products', JSON.stringify(products));
-            alert("Ürün başarıyla eklendi!");
+            if(!b.title || !b.img) return alert("Hata: Başlık ve Kapak Resmi gereklidir.");
+            books.push(b);
+            localStorage.setItem('bl_books', JSON.stringify(books));
+            alert("Kitap İncelemesi Başarıyla Eklendi!");
             location.reload();
         }
 
-        // ─── MAĞAZA RENDER ───
         function renderHome(filter = 'All') {
-            const grid = document.getElementById('product-grid');
+            const grid = document.getElementById('book-grid');
             const nav = document.getElementById('nav-cats');
             
-            nav.innerHTML = `<button onclick="renderHome('All')" class="${filter==='All'?'text-black':'text-gray-300 hover:text-black'} transition">ALL</button>` + 
-                categories.map(c => `<button onclick="renderHome('${c}')" class="${filter===c?'text-black underline underline-offset-8':'text-gray-300 hover:text-black'} transition">${c.toUpperCase()}</button>`).join('');
+            nav.innerHTML = `<button onclick="renderHome('All')" class="${filter==='All'?'text-black':'text-stone-300'} transition">HEPSİ</button>` + 
+                categories.map(c => `<button onclick="renderHome('${c}')" class="${filter===c?'text-orange-700':'text-stone-300'}">${c.toUpperCase()}</button>`).join('');
 
-            const filtered = filter === 'All' ? products : products.filter(p => p.cat === filter);
-            grid.innerHTML = filtered.map(p => `
-                <div class="product-card group cursor-pointer" onclick="openProduct(${p.id})">
-                    <div class="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-gray-50 border border-gray-50 mb-6 relative">
-                        <img src="${p.imgs[0]}" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>
+            const filtered = filter === 'All' ? books : books.filter(b => b.cat === filter);
+            grid.innerHTML = filtered.map(b => `
+                <div class="book-card group" onclick="openBook(${b.id})">
+                    <div class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-2xl transition mb-4">
+                        <img src="${b.img}" class="w-full h-full object-cover">
                     </div>
-                    <div class="text-center">
-                        <h3 class="text-[13px] font-bold text-gray-900 tracking-tight">${p.title}</h3>
-                        <p class="text-[14px] text-gray-400 font-light mt-1">$${p.price}</p>
-                    </div>
+                    <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2">${b.title}</h3>
+                    <p class="text-xs text-stone-400 mt-1 italic">${b.author}</p>
                 </div>
             `).join('');
         }
 
-        // ─── ÜRÜN DETAYI ───
-        function openProduct(id) {
-            const p = products.find(x => x.id === id);
-            document.getElementById('det-title').innerText = p.title;
-            document.getElementById('det-price').innerText = '$' + p.price;
-            document.getElementById('det-cat').innerText = p.cat;
-            document.getElementById('det-desc').innerText = p.desc;
+        function openBook(id) {
+            const b = books.find(x => x.id === id);
+            document.getElementById('det-title').innerText = b.title;
+            document.getElementById('det-author').innerText = b.author;
+            document.getElementById('det-cat').innerText = b.cat;
+            document.getElementById('det-rating').innerText = b.rating;
+            document.getElementById('det-content').innerText = b.desc;
+            document.getElementById('det-img').src = b.img;
             
-            const mediaCont = document.getElementById('detail-main-media');
-            const thumbsCont = document.getElementById('detail-thumbs');
-            
-            // İlk medyayı göster (Video varsa video, yoksa resim)
-            showMedia(p.imgs[0], p.vid);
+            // Affiliate Buton Güncelleme
+            document.getElementById('det-affiliate-text').innerText = b.affText;
+            document.getElementById('det-affiliate-link').href = b.affLink;
 
-            // Thumbnails
-            let thumbHTML = p.imgs.map((img, i) => `
-                <img src="${img}" onclick="showMedia('${img}')" class="w-20 h-24 object-cover rounded-xl border border-gray-100 cursor-pointer hover:border-black transition">
-            `).join('');
-            
-            if(p.vid) {
-                thumbHTML += `<div onclick="showMedia(null, '${p.vid}')" class="w-20 h-24 bg-black flex items-center justify-center rounded-xl cursor-pointer text-white text-[10px] font-bold">VIDEO</div>`;
+            const vCont = document.getElementById('det-video-cont');
+            if(b.vid) {
+                vCont.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${b.vid}" frameborder="0" allowfullscreen></iframe>`;
+                vCont.classList.remove('hidden');
+            } else {
+                vCont.classList.add('hidden');
             }
-            thumbsCont.innerHTML = thumbHTML;
-
-            document.getElementById('buy-action').innerHTML = `
-                <a class="gumroad-button" href="https://etsycraftsman0.gumroad.com/l/${p.slug}/checkout" data-gumroad-overlay-checkout="true">Get This Pack</a>
-            `;
 
             showPage('detail');
-            if(window.GumroadOverlay) GumroadOverlay.refresh();
         }
 
-        function showMedia(img, vid = null) {
-            const cont = document.getElementById('detail-main-media');
-            if(vid && !img) {
-                cont.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${vid}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
-            } else {
-                cont.innerHTML = `<img src="${img}" class="w-full h-full object-cover">`;
-            }
-        }
-
-        function clearAll() { if(confirm("Tüm ürünler silinecek. Emin misin?")) { localStorage.clear(); location.reload(); } }
         function logout() { location.reload(); }
-
         window.onload = () => renderHome();
     </script>
 </body>
