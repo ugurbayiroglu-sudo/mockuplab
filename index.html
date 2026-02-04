@@ -1,208 +1,262 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookLab | Kitap İncelemeleri ve Önerileri</title>
+    <title>THE NOVELIST | Curated Book Reviews & Literary Insights</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --book-bg: #fdfcf8; --ink: #1a1a1a; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--book-bg); color: var(--ink); }
-        h1, h2, .serif { font-family: 'Crimson Pro', serif; }
-        .view { display: none; }
-        .view.active { display: block; }
-        .btn-affiliate { 
-            background: #1a1a1a; color: white; padding: 16px; border-radius: 8px;
-            text-align: center; font-weight: 600; display: block; width: 100%;
-            transition: all 0.3s ease; border: 2px solid transparent;
-        }
-        .btn-affiliate:hover { background: transparent; color: #1a1a1a; border-color: #1a1a1a; }
-        .book-card { transition: transform 0.4s ease; cursor: pointer; }
-        .book-card:hover { transform: translateY(-10px); }
+        :root { --paper: #f9f7f2; --ink: #121212; --accent: #c2410c; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--paper); color: var(--ink); overflow-x: hidden; }
+        h1, h2, h3, .serif { font-family: 'Playfair Display', serif; }
+        .view { display: none; } .view.active { display: block; }
+        
+        /* Slider Styling */
+        .slider-container { position: relative; height: 70vh; min-height: 500px; overflow: hidden; background: #000; }
+        .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out; display: flex; align-items: center; }
+        .slide.active { opacity: 1; }
+        .slide-overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.8), transparent); }
+        
+        /* Premium Buttons */
+        .btn-premium { background: var(--ink); color: #fff; padding: 14px 28px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 11px; transition: 0.3s; border: 1px solid var(--ink); }
+        .btn-premium:hover { background: transparent; color: var(--ink); }
+        
+        .admin-input { width: 100%; border: 1px solid #e5e7eb; padding: 12px; border-radius: 8px; outline: none; background: #fdfdfd; font-size: 14px; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <nav class="border-b border-stone-200 sticky top-0 bg-white/90 backdrop-blur-md z-50">
-        <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
-            <div class="text-2xl font-bold tracking-tighter serif cursor-pointer" onclick="showPage('home')">
-                BOOK<span class="text-orange-700">LAB</span>
+    <nav class="border-b border-stone-200 bg-white/80 backdrop-blur-md sticky top-0 z-[80]">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="text-2xl font-black tracking-tighter serif italic cursor-pointer" onclick="showPage('home')">THE NOVELIST.</div>
+            <div id="nav-cats" class="hidden md:flex gap-8 text-[10px] font-bold tracking-[0.2em] text-stone-400 uppercase"></div>
+            <div class="flex gap-6 items-center">
+                <button class="text-[11px] font-bold uppercase tracking-wider">Search</button>
+                <button onclick="showPage('newsletter')" class="bg-orange-700 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider">Join Club</button>
             </div>
-            <div id="nav-cats" class="hidden md:flex gap-6 text-xs font-semibold uppercase tracking-widest text-stone-500"></div>
-            <button onclick="showPage('admin')" class="text-[10px] bg-stone-100 px-3 py-1 rounded-full font-bold uppercase">Panel</button>
         </div>
     </nav>
 
     <div id="page-home" class="view active">
-        <header class="py-20 text-center max-w-2xl mx-auto px-6">
-            <h1 class="text-5xl font-bold mb-4 tracking-tight">Okunacak Bir Sonraki Hikayeni Keşfet.</h1>
-            <p class="text-stone-500 text-lg">Seçkin kitap incelemeleri, derinlemesine analizler ve en iyi baskı önerileri.</p>
-        </header>
-        <main class="max-w-6xl mx-auto px-6 pb-32">
-            <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12"></div>
+        <section class="slider-container" id="hero-slider"></section>
+
+        <main class="max-w-7xl mx-auto px-6 py-24">
+            <div class="flex justify-between items-end mb-12 border-b border-stone-200 pb-6">
+                <div>
+                    <h2 class="text-4xl font-bold serif">Latest Reviews</h2>
+                    <p class="text-stone-400 text-sm mt-2 font-medium italic">Deep dives into this month's best reads.</p>
+                </div>
+            </div>
+            <div id="book-grid" class="grid grid-cols-1 md:grid-cols-3 gap-16"></div>
         </main>
     </div>
 
-    <div id="page-detail" class="view fixed inset-0 bg-[#fdfcf8] z-[100] overflow-y-auto">
-        <div class="max-w-5xl mx-auto px-6 py-12">
-            <button onclick="showPage('home')" class="fixed top-8 right-8 text-3xl font-light hover:scale-110 transition">&times;</button>
-            <div class="grid lg:grid-cols-12 gap-16 mt-10">
-                <div class="lg:col-span-5 space-y-8">
-                    <div class="aspect-[2/3] shadow-2xl rounded-lg overflow-hidden border border-stone-200">
-                        <img id="det-img" class="w-full h-full object-cover">
+    <div id="page-detail" class="view fixed inset-0 bg-white z-[100] overflow-y-auto">
+        <div class="max-w-6xl mx-auto px-6 py-20">
+            <button onclick="showPage('home')" class="fixed top-8 right-8 text-4xl font-light hover:rotate-90 transition">&times;</button>
+            
+            <div class="grid lg:grid-cols-12 gap-20">
+                <div class="lg:col-span-4">
+                    <div class="sticky top-32 space-y-8">
+                        <img id="det-img" class="w-full shadow-2xl rounded-sm">
+                        <div id="affiliate-box"></div>
                     </div>
-                    <div id="affiliate-container">
-                        <a id="det-affiliate-link" href="#" target="_blank" class="btn-affiliate">
-                            <span id="det-affiliate-text">Kitabı Satın Al</span>
-                        </a>
-                    </div>
-                    <div id="det-video-cont" class="aspect-video rounded-xl overflow-hidden shadow-lg hidden"></div>
                 </div>
-                <div class="lg:col-span-7 py-4">
-                    <div class="flex items-center gap-4 mb-4">
-                        <span id="det-cat" class="bg-orange-100 text-orange-800 text-[10px] font-black px-3 py-1 rounded-full uppercase"></span>
-                        <span class="text-stone-400 text-sm">Puan: <b id="det-rating" class="text-black"></b>/10</span>
+                <div class="lg:col-span-8">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span id="det-cat" class="text-orange-700 font-bold text-xs uppercase tracking-widest"></span>
+                        <span class="h-px w-12 bg-stone-200"></span>
+                        <span id="det-rating" class="text-stone-400 text-sm font-medium"></span>
                     </div>
-                    <h2 id="det-title" class="text-5xl font-bold mb-2 leading-tight"></h2>
-                    <h3 id="det-author" class="text-xl text-stone-400 serif mb-8"></h3>
-                    <div id="det-content" class="text-stone-700 leading-relaxed space-y-6 text-lg serif border-t border-stone-100 pt-8"></div>
+                    <h1 id="det-title" class="text-7xl font-black serif leading-[0.9] mb-4"></h1>
+                    <p id="det-author" class="text-2xl italic text-stone-400 serif mb-12"></p>
+                    
+                    <div id="det-content" class="serif text-xl leading-relaxed text-stone-800 space-y-8 border-t pt-12"></div>
+
+                    <div class="mt-20 p-10 bg-stone-50 rounded-2xl border border-stone-100">
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-stone-400 mb-4">About the Author</h4>
+                        <p id="det-author-bio" class="text-stone-600 leading-relaxed italic"></p>
+                    </div>
+
+                    <div id="det-video" class="mt-12 aspect-video rounded-2xl overflow-hidden shadow-2xl hidden"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="page-admin" class="view min-h-screen bg-stone-100 p-6 md:p-12">
-        <div class="max-w-4xl mx-auto bg-white p-10 rounded-3xl shadow-sm border">
-            <div id="admin-login" class="text-center py-10">
-                <h3 class="text-xl font-bold mb-6">Admin Girişi</h3>
-                <input type="password" id="admin-pass" class="border p-4 rounded-xl mb-4 block mx-auto text-center" placeholder="Şifre">
-                <button onclick="handleLogin()" class="bg-black text-white px-10 py-3 rounded-xl font-bold text-xs uppercase">Giriş Yap</button>
+    <div id="page-admin" class="view min-h-screen bg-gray-100 p-10">
+        <div class="max-w-5xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex">
+            <div class="w-64 bg-stone-900 text-white p-8 space-y-6">
+                <h2 class="font-bold serif italic text-xl">Dashboard</h2>
+                <nav class="space-y-4 text-sm text-stone-400">
+                    <button class="block hover:text-white" onclick="showAdminTab('books')">Add Book</button>
+                    <button class="block hover:text-white" onclick="showAdminTab('footer')">Footer Settings</button>
+                </nav>
+                <button onclick="location.href=location.pathname" class="text-xs text-red-400">Exit Admin</button>
             </div>
-
-            <div id="admin-content" class="hidden space-y-8">
-                <div class="flex justify-between border-b pb-4">
-                    <h2 class="text-2xl font-bold serif">Kitap Ekle / Yönet</h2>
-                    <button onclick="logout()" class="text-red-500 text-xs font-bold uppercase">Çıkış</button>
-                </div>
-                
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <input type="text" id="pTitle" placeholder="Kitap Adı" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
-                        <input type="text" id="pAuthor" placeholder="Yazar Adı" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
-                        <div class="flex gap-2">
-                            <select id="pCat" class="w-full border p-4 rounded-xl outline-none bg-stone-50"></select>
-                            <button onclick="addCat()" class="bg-stone-800 text-white px-4 rounded-xl font-bold">+</button>
+            <div class="flex-1 p-12">
+                <div id="admin-books" class="space-y-6">
+                    <h3 class="text-2xl font-bold mb-8">Create New Entry</h3>
+                    <div class="grid grid-cols-2 gap-6">
+                        <input type="text" id="pTitle" placeholder="Book Title" class="admin-input">
+                        <input type="text" id="pAuthor" placeholder="Author Name" class="admin-input">
+                        <input type="text" id="pCat" placeholder="Category (Fiction, Science...)" class="admin-input">
+                        <input type="text" id="pRating" placeholder="Rating (e.g. 4.5/5)" class="admin-input">
+                        <input type="text" id="pImg" placeholder="Image URL (CDN recommended)" class="admin-input">
+                        <input type="text" id="pVid" placeholder="YouTube Video ID" class="admin-input">
+                        <input type="text" id="pAffText" placeholder="Affiliate Button Text" class="admin-input">
+                        <input type="text" id="pAffLink" placeholder="Affiliate URL" class="admin-input">
+                        <div class="col-span-2 flex items-center gap-2">
+                            <input type="checkbox" id="pIsHero"> <label class="text-sm font-bold">Show in Top Slider</label>
                         </div>
-                        <input type="text" id="pRating" placeholder="Puan (Örn: 9.2)" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
                     </div>
-                    <div class="space-y-4">
-                        <input type="text" id="pImgs" placeholder="Kapak Resmi URL" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
-                        <input type="text" id="pVid" placeholder="YouTube Video ID (İsteğe bağlı)" class="w-full border p-4 rounded-xl outline-none bg-stone-50">
-                        <input type="text" id="pAffText" placeholder="Buton Yazısı (Örn: Amazon'dan Al)" class="w-full border p-4 rounded-xl outline-none bg-orange-50 font-bold border-orange-100">
-                        <input type="text" id="pAffLink" placeholder="Affiliate Linki (http://...)" class="w-full border p-4 rounded-xl outline-none bg-orange-50 font-bold border-orange-100">
-                    </div>
+                    <textarea id="pAuthorBio" placeholder="Author Biography" class="admin-input h-24"></textarea>
+                    <textarea id="pDesc" placeholder="Full Review (HTML allowed)" class="admin-input h-64"></textarea>
+                    <button onclick="saveProduct()" class="w-full bg-orange-700 text-white py-4 rounded-xl font-bold uppercase tracking-widest">Publish Post</button>
                 </div>
-                <textarea id="pDesc" class="w-full border p-4 rounded-xl h-64 outline-none bg-stone-50 serif" placeholder="Kitap incelemeniz ve kişisel yorumlarınız..."></textarea>
-                <button onclick="saveBook()" class="w-full bg-orange-700 text-white py-5 rounded-xl font-bold uppercase tracking-widest hover:bg-black transition shadow-xl">İncelemeyi Yayınla</button>
-                <button onclick="if(confirm('Hepsi silinsin mi?')) {localStorage.clear(); location.reload();}" class="w-full text-[10px] text-stone-300 uppercase mt-4">Tüm Verileri Temizle</button>
             </div>
         </div>
     </div>
+
+    <footer class="bg-stone-900 text-white py-24 px-6 mt-20">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-16">
+            <div class="col-span-1">
+                <h2 class="text-2xl font-bold serif italic mb-6">The Novelist.</h2>
+                <p class="text-stone-400 text-sm leading-relaxed">A sanctuary for bibliophiles. We curate thoughts on the world's most influential literature.</p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest mb-8 text-stone-500">Sitemap</h4>
+                <ul class="space-y-4 text-sm font-medium">
+                    <li><a href="#" onclick="showPage('home')">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest mb-8 text-stone-500">Categories</h4>
+                <div id="footer-cats" class="space-y-4 text-sm font-medium"></div>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-widest mb-8 text-stone-500">Newsletter</h4>
+                <p class="text-xs text-stone-400 mb-4">Weekly curations delivered to your inbox.</p>
+                <div class="flex gap-2">
+                    <input type="text" placeholder="Email" class="bg-stone-800 border-none p-3 rounded-lg text-xs w-full">
+                    <button class="bg-orange-700 p-3 rounded-lg text-xs font-bold">Join</button>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        let categories = JSON.parse(localStorage.getItem('bl_cats')) || ["Roman", "Tarih", "Yazılım", "Bilim"];
-        let books = JSON.parse(localStorage.getItem('bl_books')) || [];
-
+        let db = JSON.parse(localStorage.getItem('novelist_db')) || [];
+        
+        // ROUTING & ADMIN HIDDEN ACCESS
         function showPage(p) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById('page-' + p).classList.add('active');
-            if(p === 'home') renderHome();
             window.scrollTo(0,0);
         }
 
-        function handleLogin() {
-            if(document.getElementById('admin-pass').value === "admin123") {
-                document.getElementById('admin-login').classList.add('hidden');
-                document.getElementById('admin-content').classList.remove('hidden');
-                refreshCats();
-            }
-        }
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('admin')) showPage('admin');
+            renderHome();
+        };
 
-        function refreshCats() {
-            document.getElementById('pCat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
-
-        function addCat() {
-            let c = prompt("Yeni kategori:");
-            if(c) { categories.push(c); localStorage.setItem('bl_cats', JSON.stringify(categories)); refreshCats(); }
-        }
-
-        function saveBook() {
-            const b = {
+        function saveProduct() {
+            const entry = {
                 id: Date.now(),
                 title: document.getElementById('pTitle').value,
                 author: document.getElementById('pAuthor').value,
                 cat: document.getElementById('pCat').value,
                 rating: document.getElementById('pRating').value,
-                img: document.getElementById('pImgs').value,
+                img: document.getElementById('pImg').value,
                 vid: document.getElementById('pVid').value,
-                affText: document.getElementById('pAffText').value || "Satın Al",
+                affText: document.getElementById('pAffText').value || "Buy the Book",
                 affLink: document.getElementById('pAffLink').value || "#",
+                isHero: document.getElementById('pIsHero').checked,
+                bio: document.getElementById('pAuthorBio').value,
                 desc: document.getElementById('pDesc').value
             };
-            if(!b.title || !b.img) return alert("Hata: Başlık ve Kapak Resmi gereklidir.");
-            books.push(b);
-            localStorage.setItem('bl_books', JSON.stringify(books));
-            alert("Kitap İncelemesi Başarıyla Eklendi!");
-            location.reload();
+            db.push(entry);
+            localStorage.setItem('novelist_db', JSON.stringify(db));
+            alert("Published Successfully!");
+            location.href = location.pathname;
         }
 
-        function renderHome(filter = 'All') {
+        function renderHome() {
             const grid = document.getElementById('book-grid');
+            const slider = document.getElementById('hero-slider');
             const nav = document.getElementById('nav-cats');
-            
-            nav.innerHTML = `<button onclick="renderHome('All')" class="${filter==='All'?'text-black':'text-stone-300'} transition">HEPSİ</button>` + 
-                categories.map(c => `<button onclick="renderHome('${c}')" class="${filter===c?'text-orange-700':'text-stone-300'}">${c.toUpperCase()}</button>`).join('');
+            const fCats = document.getElementById('footer-cats');
 
-            const filtered = filter === 'All' ? books : books.filter(b => b.cat === filter);
-            grid.innerHTML = filtered.map(b => `
-                <div class="book-card group" onclick="openBook(${b.id})">
-                    <div class="aspect-[2/3] overflow-hidden rounded-lg shadow-md group-hover:shadow-2xl transition mb-4">
-                        <img src="${b.img}" class="w-full h-full object-cover">
+            const cats = [...new Set(db.map(b => b.cat))];
+            nav.innerHTML = cats.map(c => `<button onclick="renderFiltered('${c}')">${c}</button>`).join('');
+            fCats.innerHTML = cats.map(c => `<a href="#" class="block hover:text-orange-500">${c}</a>`).join('');
+
+            // Slider Render
+            const heroes = db.filter(b => b.isHero);
+            slider.innerHTML = heroes.map((b, i) => `
+                <div class="slide ${i===0?'active':''}" style="background: url('${b.img}') center/cover no-repeat">
+                    <div class="slide-overlay"></div>
+                    <div class="relative z-10 max-w-7xl mx-auto px-6 text-white w-full">
+                        <span class="text-orange-500 font-bold uppercase tracking-widest text-xs">${b.cat}</span>
+                        <h2 class="text-7xl font-bold serif my-4 max-w-2xl">${b.title}</h2>
+                        <p class="text-stone-300 italic text-xl mb-8 serif">By ${b.author}</p>
+                        <button onclick="openEntry(${b.id})" class="btn-premium !border-white hover:!bg-white hover:!text-black">Read Review</button>
                     </div>
-                    <h3 class="font-bold text-sm tracking-tight leading-snug line-clamp-2">${b.title}</h3>
-                    <p class="text-xs text-stone-400 mt-1 italic">${b.author}</p>
                 </div>
+            `).join('');
+            if(heroes.length > 1) startSlider();
+
+            // Grid Render
+            grid.innerHTML = db.map(b => `
+                <article class="group cursor-pointer" onclick="openEntry(${b.id})">
+                    <div class="aspect-[3/4] overflow-hidden bg-stone-100 mb-6 rounded-sm shadow-sm group-hover:shadow-2xl transition-all duration-500">
+                        <img src="${b.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                    </div>
+                    <span class="text-[10px] font-bold text-orange-700 uppercase tracking-[0.2em] mb-2 block">${b.cat}</span>
+                    <h3 class="text-2xl font-bold serif mb-3 leading-tight group-hover:text-orange-700 transition">${b.title}</h3>
+                    <p class="text-stone-400 text-sm italic mb-4">By ${b.author}</p>
+                    <p class="text-stone-600 text-sm line-clamp-3 leading-relaxed">${b.desc.replace(/<[^>]*>/g, '')}</p>
+                </article>
             `).join('');
         }
 
-        function openBook(id) {
-            const b = books.find(x => x.id === id);
+        function openEntry(id) {
+            const b = db.find(x => x.id === id);
             document.getElementById('det-title').innerText = b.title;
-            document.getElementById('det-author').innerText = b.author;
+            document.getElementById('det-author').innerText = "By " + b.author;
             document.getElementById('det-cat').innerText = b.cat;
             document.getElementById('det-rating').innerText = b.rating;
-            document.getElementById('det-content').innerText = b.desc;
+            document.getElementById('det-content').innerHTML = b.desc;
+            document.getElementById('det-author-bio').innerText = b.bio;
             document.getElementById('det-img').src = b.img;
             
-            // Affiliate Buton Güncelleme
-            document.getElementById('det-affiliate-text').innerText = b.affText;
-            document.getElementById('det-affiliate-link').href = b.affLink;
+            document.getElementById('affiliate-box').innerHTML = `
+                <a href="${b.affLink}" target="_blank" class="btn-premium block text-center">${b.affText}</a>
+            `;
 
-            const vCont = document.getElementById('det-video-cont');
+            const v = document.getElementById('det-video');
             if(b.vid) {
-                vCont.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${b.vid}" frameborder="0" allowfullscreen></iframe>`;
-                vCont.classList.remove('hidden');
-            } else {
-                vCont.classList.add('hidden');
-            }
+                v.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${b.vid}"></iframe>`;
+                v.classList.remove('hidden');
+            } else v.classList.add('hidden');
 
             showPage('detail');
         }
 
-        function logout() { location.reload(); }
-        window.onload = () => renderHome();
+        function startSlider() {
+            let current = 0;
+            const slides = document.querySelectorAll('.slide');
+            setInterval(() => {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        }
     </script>
 </body>
 </html>
