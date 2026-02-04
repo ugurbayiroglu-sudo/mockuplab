@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MockupLab | Premium Digital Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fff; color: #000; scroll-behavior: smooth; }
+        .gumroad-button { 
+            display: block !important; width: 100% !important; background-color: #000 !important; 
+            color: #fff !important; text-transform: uppercase !important; letter-spacing: 1px !important; 
+            font-size: 11px !important; font-weight: 700 !important; padding: 18px !important; 
+            border-radius: 4px !important; text-align: center !important; 
+        }
+        .view { display: none; }
+        .view.active { display: block; }
+        .drop-zone.active { border: 2px dashed #2563eb; background: #f8fafc; }
+        #detail-view { z-index: 100; }
+        /* Pinterest Style Grid */
+        .product-card img { transition: transform 0.5s ease; }
+        .product-card:hover img { transform: scale(1.03); }
+    </style>
+</head>
+<body>
+
+    <nav class="border-b border-gray-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="text-xl font-black tracking-tighter uppercase italic cursor-pointer" onclick="showPage('home')">
+                MOCKUP<span class="text-blue-600">LAB</span>
+            </div>
+            <div id="nav-cats" class="hidden md:flex gap-8 text-[11px] font-bold uppercase tracking-widest text-gray-400"></div>
+            <div class="flex items-center gap-4">
+                <button onclick="showPage('admin')" class="text-[10px] text-gray-300 hover:text-black font-bold uppercase tracking-tighter">Panel</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="page-home" class="view active">
+        <header class="py-20 text-center">
+            <h1 class="text-6xl font-black tracking-tighter mb-4">Premium Assets.</h1>
+            <p class="text-gray-400 max-w-md mx-auto text-sm leading-relaxed font-medium">Professional grade mockups for digital creators and apparel brands.</p>
+        </header>
+        <main class="max-w-7xl mx-auto px-6 pb-32">
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-16"></div>
+        </main>
+    </div>
+
+    <div id="page-detail" class="view fixed inset-0 bg-white z-[100] overflow-y-auto">
+        <div class="max-w-6xl mx-auto px-6 py-12">
+            <button onclick="showPage('home')" class="fixed top-8 right-8 text-4xl font-light hover:rotate-90 transition-transform">&times;</button>
+            <div class="grid lg:grid-cols-2 gap-16 mt-10">
+                <div class="space-y-6">
+                    <div id="detail-main-media" class="aspect-[4/5] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+                        </div>
+                    <div id="detail-thumbs" class="flex gap-4 overflow-x-auto pb-4"></div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <span id="det-cat" class="text-blue-600 text-[10px] font-black uppercase tracking-[0.3em] mb-4"></span>
+                    <h2 id="det-title" class="text-5xl font-black tracking-tight mb-4 leading-[0.9]"></h2>
+                    <p id="det-price" class="text-2xl font-light mb-8 text-gray-900"></p>
+                    <div id="det-desc" class="text-gray-500 text-sm leading-relaxed mb-10 space-y-4 whitespace-pre-line border-t pt-8"></div>
+                    <div id="buy-action"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-admin" class="view min-h-screen bg-slate-50 p-6 md:p-12">
+        <div class="max-w-4xl mx-auto">
+            <div id="admin-login" class="bg-white p-12 rounded-[2rem] shadow-xl border border-slate-100 text-center">
+                <h3 class="text-xl font-bold mb-8 uppercase tracking-widest">Admin Access</h3>
+                <input type="password" id="admin-pass" class="w-full max-w-xs border-2 border-slate-100 p-4 rounded-2xl mb-4 text-center outline-none focus:border-blue-500 transition-colors" placeholder="Password">
+                <button onclick="handleLogin()" class="bg-black text-white px-12 py-4 rounded-2xl font-bold text-xs uppercase tracking-widest block mx-auto">Unlock</button>
+            </div>
+
+            <div id="admin-content" class="hidden space-y-8">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="text-3xl font-black italic tracking-tighter uppercase">Dashboard</h2>
+                    <button onclick="logout()" class="text-xs font-bold text-red-500 uppercase tracking-widest">Logout</button>
+                </div>
+
+                <div class="bg-white p-8 rounded-[2rem] border shadow-sm space-y-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Ürün Başlığı</label>
+                            <input type="text" id="pTitle" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none">
+                            
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Kategori</label>
+                            <div class="flex gap-2">
+                                <select id="pCat" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none"></select>
+                                <button onclick="addCatPrompt()" class="bg-blue-600 text-white px-6 rounded-2xl font-bold">+</button>
+                            </div>
+
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Fiyat & Gumroad Slug</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="pPrice" placeholder="29.00" class="border p-4 rounded-2xl bg-slate-50 outline-none">
+                                <input type="text" id="pSlug" placeholder="zxshe" class="border p-4 rounded-2xl bg-slate-50 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">Görseller (Virgülle ayırın veya URL yapıştırın)</label>
+                            <textarea id="pImgs" placeholder="images/1.jpg, images/2.jpg veya https://cdn.com/1.jpg" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none h-[120px] text-xs"></textarea>
+                            
+                            <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400">YouTube Video ID (İsteğe bağlı)</label>
+                            <input type="text" id="pVid" placeholder="Örn: dQw4w9WgXcQ" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none">
+                        </div>
+                    </div>
+
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-gray-400 block">Ürün Açıklaması & SEO Etiketleri</label>
+                    <textarea id="pDesc" class="w-full border p-4 rounded-2xl bg-slate-50 outline-none h-40 text-sm" placeholder="Detaylı ürün bilgisi..."></textarea>
+
+                    <button onclick="saveProduct()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase tracking-[0.2em] text-xs hover:bg-black transition-colors shadow-lg shadow-blue-100">Ürünü Yayınla</button>
+                    <button onclick="clearAll()" class="w-full text-[10px] text-red-300 uppercase font-bold py-2">Tüm Veriyi Sıfırla (Dikkat!)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let categories = JSON.parse(localStorage.getItem('ml_categories')) || ["Summer", "Hoodie", "Bundle"];
+        let products = JSON.parse(localStorage.getItem('ml_products')) || [];
+
+        // ─── NAVİGASYON MANTIĞI ───
+        function showPage(pageId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            if(pageId === 'home') renderHome();
+            window.scrollTo(0,0);
+        }
+
+        // ─── ADMİN MANTIĞI ───
+        function handleLogin() {
+            if(document.getElementById('admin-pass').value === "admin123") {
+                document.getElementById('admin-login').classList.add('hidden');
+                document.getElementById('admin-content').classList.remove('hidden');
+                refreshCatSelect();
+            }
+        }
+
+        function addCatPrompt() {
+            const val = prompt("Yeni kategori ismi:");
+            if(val) { 
+                categories.push(val); 
+                localStorage.setItem('ml_categories', JSON.stringify(categories));
+                refreshCatSelect();
+                renderHome();
+            }
+        }
+
+        function refreshCatSelect() {
+            document.getElementById('pCat').innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        function saveProduct() {
+            const p = {
+                id: Date.now(),
+                title: document.getElementById('pTitle').value,
+                price: document.getElementById('pPrice').value,
+                slug: document.getElementById('pSlug').value,
+                cat: document.getElementById('pCat').value,
+                desc: document.getElementById('pDesc').value,
+                vid: document.getElementById('pVid').value,
+                imgs: document.getElementById('pImgs').value.split(',').map(s => s.trim()).filter(s => s !== "")
+            };
+            if(!p.title || p.imgs.length === 0) return alert("Hata: Başlık ve en az bir görsel zorunludur.");
+            products.push(p);
+            localStorage.setItem('ml_products', JSON.stringify(products));
+            alert("Ürün başarıyla eklendi!");
+            location.reload();
+        }
+
+        // ─── MAĞAZA RENDER ───
+        function renderHome(filter = 'All') {
+            const grid = document.getElementById('product-grid');
+            const nav = document.getElementById('nav-cats');
+            
+            nav.innerHTML = `<button onclick="renderHome('All')" class="${filter==='All'?'text-black':'text-gray-300 hover:text-black'} transition">ALL</button>` + 
+                categories.map(c => `<button onclick="renderHome('${c}')" class="${filter===c?'text-black underline underline-offset-8':'text-gray-300 hover:text-black'} transition">${c.toUpperCase()}</button>`).join('');
+
+            const filtered = filter === 'All' ? products : products.filter(p => p.cat === filter);
+            grid.innerHTML = filtered.map(p => `
+                <div class="product-card group cursor-pointer" onclick="openProduct(${p.id})">
+                    <div class="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-gray-50 border border-gray-50 mb-6 relative">
+                        <img src="${p.imgs[0]}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors"></div>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-[13px] font-bold text-gray-900 tracking-tight">${p.title}</h3>
+                        <p class="text-[14px] text-gray-400 font-light mt-1">$${p.price}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ─── ÜRÜN DETAYI ───
+        function openProduct(id) {
+            const p = products.find(x => x.id === id);
+            document.getElementById('det-title').innerText = p.title;
+            document.getElementById('det-price').innerText = '$' + p.price;
+            document.getElementById('det-cat').innerText = p.cat;
+            document.getElementById('det-desc').innerText = p.desc;
+            
+            const mediaCont = document.getElementById('detail-main-media');
+            const thumbsCont = document.getElementById('detail-thumbs');
+            
+            // İlk medyayı göster (Video varsa video, yoksa resim)
+            showMedia(p.imgs[0], p.vid);
+
+            // Thumbnails
+            let thumbHTML = p.imgs.map((img, i) => `
+                <img src="${img}" onclick="showMedia('${img}')" class="w-20 h-24 object-cover rounded-xl border border-gray-100 cursor-pointer hover:border-black transition">
+            `).join('');
+            
+            if(p.vid) {
+                thumbHTML += `<div onclick="showMedia(null, '${p.vid}')" class="w-20 h-24 bg-black flex items-center justify-center rounded-xl cursor-pointer text-white text-[10px] font-bold">VIDEO</div>`;
+            }
+            thumbsCont.innerHTML = thumbHTML;
+
+            document.getElementById('buy-action').innerHTML = `
+                <a class="gumroad-button" href="https://etsycraftsman0.gumroad.com/l/${p.slug}/checkout" data-gumroad-overlay-checkout="true">Get This Pack</a>
+            `;
+
+            showPage('detail');
+            if(window.GumroadOverlay) GumroadOverlay.refresh();
+        }
+
+        function showMedia(img, vid = null) {
+            const cont = document.getElementById('detail-main-media');
+            if(vid && !img) {
+                cont.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${vid}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+            } else {
+                cont.innerHTML = `<img src="${img}" class="w-full h-full object-cover">`;
+            }
+        }
+
+        function clearAll() { if(confirm("Tüm ürünler silinecek. Emin misin?")) { localStorage.clear(); location.reload(); } }
+        function logout() { location.reload(); }
+
+        window.onload = () => renderHome();
+    </script>
+</body>
+</html>
