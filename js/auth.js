@@ -54,5 +54,13 @@ async function redirectByRole(user) {
   } else {
     window.location.href = "index.html";
   }
-}
+  
+// 🔘 BUTTON EVENTS
+document.addEventListener("DOMContentLoaded", () => {
+  const googleBtn = document.getElementById("googleBtn");
+
+  if (googleBtn) {
+    googleBtn.addEventListener("click", googleLogin);
+  }
+});
 
