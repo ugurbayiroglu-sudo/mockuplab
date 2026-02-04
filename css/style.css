@@ -1,32 +1,15 @@
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --text: #e5e7eb;
+}
+
 body {
-  background: red !important;
+  background: var(--bg);
+  color: var(--text);
+  transition: 0.3s;
 }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #121212;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.login-container {
-  background: #1e1e1e;
-  padding: 30px;
-  border-radius: 8px;
-  width: 300px;
-}
-
-.login-container h1 {
-  text-align: center;
-}
-
-.login-container input,
-.login-container button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-
